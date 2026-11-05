@@ -85,8 +85,6 @@ const mbs = (key) => `/work/memory-bubble-store/${MBS_LOCAL[key]}`;
 
 const PJP = (file) => `/work/project-jam-plant/${file}`;
 
-const RXR = (file) => `/work/ready-xr/${file}`;
-
 const EVA = (file) => `/work/eva-terminal/${file}`;
 const EVA_SCREEN = EVA("screen.jpg");
 
@@ -346,43 +344,6 @@ export const work = [
           "Saving player feedback on Eva\x27s answers to keep improving the experience.",
           "Bringing the game to more platforms, like mobile.",
         ],
-      },
-    ],
-    next: "ready-xr",
-  },
-  {
-    slug: "ready-xr",
-    title: "Ready XR",
-    subtitle: "An emergency training protocol experience in XR",
-    color: "#ffd9d6",
-    accent: "#e2231a",
-    hero: { src: RXR("crouch.jpg"), alt: "A Ready XR user crouching under a table" },
-    meta: [
-      { label: "Event", value: "MIT Reality Hack 2024" },
-      { label: "Team", value: "Team Goose — Daniel Nguyen, Brady Li, Lauryn Vania Kurniawan, Gozie Nwaka" },
-      { label: "Made in", value: "3 days" },
-    ],
-    tags: ["Hackathon", "XR", "Pictograms", "Experience design"],
-    links: [{ label: "Devpost", href: "https://devpost.com/software/readyxr" }],
-    intro: [
-      "This project was made during MIT Reality Hack 2024, in three days, with four teammates I had just met.",
-      "In a world full of unexpected disasters, we often forget the in-the-moment decisions that can save our lives — and training programs can be costly and boring. Ready XR is an emergency training protocol experience: immersive XR simulations that help people new to an area, or with little exposure to natural disasters, learn and practice emergency preparedness in a fun, fast-paced way.",
-    ],
-    sections: [
-      {
-        title: "The experience",
-        text: "Players learn research-based actions — cover your head, crouch under a table, grab a child — guided by simple on-screen prompts.",
-        rows: [cols(RXR("vr-child.jpg"), RXR("vr-cover-head.jpg")), img(RXR("crouch-scene.jpg"), "Crouch under a table")],
-      },
-      {
-        title: "Pictograms",
-        text: "A set of clear, bold pictograms so instructions read instantly, even in a stressful moment.",
-        rows: [cols(RXR("pose-02.png"), RXR("pose-03.png"), RXR("pose-04.png"), RXR("pose-05.png"))],
-      },
-      {
-        title: "Making it",
-        text: "To bring the vision to life, we worked across design, music and sound, and development.",
-        rows: [center(RXR("title.jpg"), "Ready XR title card"), img(RXR("process.jpg"), "Design and development process"), img(RXR("team-at-work.jpg"), "The team at work")],
       },
     ],
     next: "lg-wonder-box",

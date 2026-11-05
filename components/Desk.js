@@ -14,20 +14,18 @@ const SKILLS = ["Branding", "Packaging", "Campaigns", "Social & Digital", "Illus
 const MESS_WIDE = [
   { x: 0.02, y: 0.09, r: -7 },
   { x: 0.81, y: 0.08, r: 6 },
-  { x: 0.01, y: 0.6, r: 4 },
-  { x: 0.21, y: 0.64, r: -4 },
-  { x: 0.41, y: 0.6, r: 5 },
-  { x: 0.61, y: 0.64, r: -6 },
-  { x: 0.8, y: 0.58, r: 3 },
+  { x: 0.03, y: 0.6, r: 4 },
+  { x: 0.27, y: 0.64, r: -4 },
+  { x: 0.52, y: 0.6, r: 7 },
+  { x: 0.77, y: 0.56, r: -5 },
 ];
 const MESS_NARROW = [
   { x: 0.04, y: 0.4, r: -6 },
   { x: 0.54, y: 0.38, r: 5 },
-  { x: 0.07, y: 0.55, r: 4 },
-  { x: 0.51, y: 0.54, r: -5 },
-  { x: 0.04, y: 0.7, r: 3 },
-  { x: 0.54, y: 0.69, r: -4 },
-  { x: 0.31, y: 0.62, r: 6 },
+  { x: 0.07, y: 0.57, r: 4 },
+  { x: 0.51, y: 0.56, r: -5 },
+  { x: 0.04, y: 0.73, r: 3 },
+  { x: 0.54, y: 0.72, r: -4 },
 ];
 
 // Washi tape colors, angles and positions, one per piece (repeats if there are more pieces)

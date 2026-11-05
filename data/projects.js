@@ -68,13 +68,6 @@ export const webProjects = [
     link: "/work/eva-terminal",
   },
   {
-    title: "Ready XR",
-    tag: "MIT Reality Hack 2024",
-    image: "/work/ready-xr/title.jpg",
-    more: ["/work/ready-xr/vr-child.jpg", "/work/ready-xr/crouch-scene.jpg", "/work/ready-xr/vr-cover-head.jpg"],
-    link: "/work/ready-xr",
-  },
-  {
     title: "LG Wonder Box",
     tag: "3D animation",
     image: "/projects/lg-wonder-box.webp",
