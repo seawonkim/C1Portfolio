@@ -102,6 +102,13 @@ export default async function WorkPage({ params }) {
           <img src={project.hero.src} alt={project.hero.alt || `${project.title} cover`} />
         </div>
 
+        {project.afterHero && (
+          <div className={styles.afterHero}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={project.afterHero.src} alt={project.afterHero.alt || ""} />
+          </div>
+        )}
+
         <section className={styles.info}>
           <h1 className={styles.title}>{project.title}</h1>
           <p className={styles.subtitle}>{project.subtitle}</p>

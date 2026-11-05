@@ -74,6 +74,7 @@ const sal = (key) => `/work/saligia/${SAL_LOCAL[key]}`;
 
 // Saved in public/work/memory-bubble-store
 const MBS_LOCAL = {
+  cover: "cover.jpg",
   poster: "poster.jpg",
   shot1: "mbs_image4.jpg",
   shot2: "mbs_image2.jpg",
@@ -211,7 +212,9 @@ export const work = [
     subtitle: "A calming, nostalgic game made in 48 hours",
     color: "#c6e8f8",
     accent: "#6c4ff5",
-    hero: { src: mbs("poster", 1400), alt: "Memory Bubble Store poster", fit: "contain" },
+    hero: { src: mbs("cover"), alt: "The Stressed Duck in the Memory Bubble Store" },
+    // Shown full width right under the cover
+    afterHero: { src: mbs("poster"), alt: "Memory Bubble Store poster" },
     meta: [
       { label: "Event", value: "Global Game Jam 2025" },
       { label: "Team", value: "Christine Chang (coding director)" },

@@ -12,20 +12,20 @@ const SKILLS = ["Branding", "Packaging", "Campaigns", "Social & Digital", "Illus
 
 // Where each piece lands on the desk ("mess"), as fractions of the screen, plus a tilt in degrees.
 const MESS_WIDE = [
-  { x: 0.02, y: 0.09, r: -7 },
-  { x: 0.81, y: 0.08, r: 6 },
-  { x: 0.03, y: 0.6, r: 4 },
-  { x: 0.27, y: 0.64, r: -4 },
-  { x: 0.52, y: 0.6, r: 7 },
-  { x: 0.77, y: 0.56, r: -5 },
+  { x: 0.015, y: 0.08, r: -6 },
+  { x: 0.775, y: 0.07, r: 5 },
+  { x: 0.02, y: 0.57, r: 4 },
+  { x: 0.265, y: 0.6, r: -4 },
+  { x: 0.51, y: 0.57, r: 5 },
+  { x: 0.765, y: 0.555, r: -5 },
 ];
 const MESS_NARROW = [
-  { x: 0.04, y: 0.4, r: -6 },
-  { x: 0.54, y: 0.38, r: 5 },
-  { x: 0.07, y: 0.57, r: 4 },
-  { x: 0.51, y: 0.56, r: -5 },
-  { x: 0.04, y: 0.73, r: 3 },
-  { x: 0.54, y: 0.72, r: -4 },
+  { x: 0.03, y: 0.34, r: -5 },
+  { x: 0.53, y: 0.33, r: 4 },
+  { x: 0.05, y: 0.5, r: 3 },
+  { x: 0.51, y: 0.49, r: -4 },
+  { x: 0.03, y: 0.655, r: 3 },
+  { x: 0.53, y: 0.65, r: -3 },
 ];
 
 // Washi tape colors, angles and positions, one per piece (repeats if there are more pieces)
@@ -86,7 +86,7 @@ export default function Desk() {
       W = rect.width;
       H = rect.height;
       narrow = W < 700;
-      const cardW = narrow ? Math.min(150, W * 0.37) : Math.min(260, W * (W < 1100 ? 0.24 : 0.16));
+      const cardW = narrow ? Math.min(180, W * 0.44) : Math.min(310, W * (W < 1100 ? 0.27 : 0.2));
       desk.style.setProperty("--card-w", `${Math.round(cardW)}px`);
       items.forEach((it, i) => {
         it.el = cardRefs.current[i];
@@ -158,7 +158,7 @@ export default function Desk() {
     }
 
     // ---- Kinetic name ----
-    const letters = letterRefs.current.filter(Boolean).map((el) => ({ el, wght: 400, wdth: 50 }));
+    const letters = letterRefs.current.filter(Boolean).map((el) => ({ el, wght: 520, wdth: 58 }));
 
     function animateLetters(t) {
       const radius = Math.max(220, W * 0.32);
@@ -173,12 +173,11 @@ export default function Desk() {
           f = Math.max(0, 1 - d / radius);
           f = f * f * (3 - 2 * f);
         } else {
-          // A slow wave through the letters when nobody is pointing (held still for reduced motion)
-          f = reduceMotion ? 0.35 : 0.3 + 0.25 * Math.sin(t * 1.4 - i * 0.55);
+          // Thin and narrow at rest so the cards never cover it, with a faint ripple
+          f = reduceMotion ? 0 : 0.05 + 0.05 * Math.sin(t * 1.4 - i * 0.55);
         }
-        const intro = Math.min(1, t / 1.2);
-        const wght = 250 + 650 * f;
-        const wdth = 60 + 80 * f * intro + (1 - intro) * -10;
+        const wght = 520 + 380 * f;
+        const wdth = 58 + 82 * f;
         L.wght += (wght - L.wght) * 0.14;
         L.wdth += (wdth - L.wdth) * 0.14;
         L.el.style.fontVariationSettings = `"wght" ${L.wght.toFixed(0)}, "wdth" ${clamp(L.wdth, 50, 150).toFixed(1)}`;

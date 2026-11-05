@@ -432,3 +432,16 @@
     margin-top: -36px;
   }
 }
+
+/* An extra full-width image directly under the cover (e.g. a poster) */
+.afterHero {
+  border: var(--edge);
+  border-bottom: none;
+  background: #fff;
+}
+
+.afterHero img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
