@@ -86,7 +86,7 @@ export default function Desk() {
       W = rect.width;
       H = rect.height;
       narrow = W < 700;
-      const cardW = narrow ? Math.min(180, W * 0.44) : Math.min(310, W * (W < 1100 ? 0.27 : 0.2));
+      const cardW = narrow ? Math.min(180, W * 0.44) : Math.min(310, W * (W < 1100 ? 0.27 : 0.2), H * 0.34);
       desk.style.setProperty("--card-w", `${Math.round(cardW)}px`);
       items.forEach((it, i) => {
         it.el = cardRefs.current[i];
@@ -112,14 +112,23 @@ export default function Desk() {
 
     function messTargets() {
       const spots = narrow ? MESS_NARROW : MESS_WIDE;
+      // Where the name + description end, so the lower cards never cover the text
+      const role = desk.querySelector(`.${styles.role}`);
+      const textBottom = role ? role.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + 16 : H * 0.5;
+      const lowerSpots = spots.filter((s) => s.y > 0.25);
+      const firstLower = Math.min(...lowerSpots.map((s) => s.y));
       return items.map((it, i) => {
         const s = spots[i % spots.length];
-        return {
-          x: clamp(s.x * W, 8, W - it.w - 8),
-          y: clamp(s.y * H, 60, H - TICKER_H - it.h - 12),
-          r: s.r,
-          scale: 1,
-        };
+        let y = s.y * H;
+        if (s.y > 0.25) {
+          // Keep the same staggering, but start the lower rows below the text
+          y = Math.max(y, textBottom + (s.y - firstLower) * H);
+          // Stay above the ticker, but never move back up over the text
+          y = Math.max(textBottom, Math.min(y, H - TICKER_H - it.h - 12));
+        } else {
+          y = clamp(y, 60, H - TICKER_H - it.h - 12);
+        }
+        return { x: clamp(s.x * W, 8, W - it.w - 8), y, r: s.r, scale: 1 };
       });
     }
 
@@ -314,6 +323,8 @@ export default function Desk() {
 
     layout(true);
     raf = requestAnimationFrame(frame);
+    // Re-measure once the fonts have loaded (the name's height can change)
+    document.fonts?.ready.then(() => layout(false));
     const ro = new ResizeObserver(() => layout(false));
     ro.observe(desk);
     desk.addEventListener("pointermove", onMove);
