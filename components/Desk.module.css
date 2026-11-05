@@ -1,0 +1,430 @@
+.desk {
+  --paper: #efebe3;
+  --ink: #141414;
+  --muted: #5e5a54;
+  --accent: #2f45ff;
+  --card-w: 260px;
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  color: var(--ink);
+  /* Paper with a faint dot grid, like a cutting mat */
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(20, 20, 20, 0.13) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  /* Phones can still scroll down the page; only the cards themselves capture touches for dragging */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---------- Top bar ---------- */
+.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  pointer-events: none;
+}
+
+.mark,
+.nav {
+  pointer-events: auto;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav a {
+  padding: 7px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--paper);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav a:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ---------- Kinetic name ---------- */
+.intro {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 25%;
+  z-index: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.name {
+  font-family: var(--font-kinetic), system-ui, sans-serif;
+  font-size: clamp(64px, 13vw, 230px);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.word {
+  display: inline-block;
+  margin: 0 0.08em;
+}
+
+.letter {
+  display: inline-block;
+  font-variation-settings: "wght" 400, "wdth" 60;
+  transition: color 0.25s ease;
+}
+
+.hot {
+  color: var(--accent);
+}
+
+.role {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: clamp(12px, 2vw, 24px);
+}
+
+.role strong {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.role span {
+  max-width: 34ch;
+  font-size: clamp(14px, 1.3vw, 17px);
+  color: var(--muted);
+}
+
+/* ---------- Pieces of work ---------- */
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  width: var(--card-w);
+  cursor: grab;
+  touch-action: none;
+  will-change: transform;
+  transform-origin: 50% 50%;
+  -webkit-user-drag: none;
+}
+
+.card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.lift {
+  position: relative;
+  display: block;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 6px 10px rgba(20, 20, 20, 0.14));
+}
+
+.card:hover .lift,
+.lifted .lift {
+  transform: scale(1.04);
+  filter: drop-shadow(0 18px 24px rgba(20, 20, 20, 0.22));
+}
+
+.lifted {
+  cursor: grabbing;
+}
+
+.frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #ddd8cf;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.tag {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Every piece is a white print held on with a strip of washi tape */
+.lift {
+  padding: 10px 10px 12px;
+  background: #fff;
+}
+
+.label {
+  padding-top: 8px;
+}
+
+.tape {
+  position: absolute;
+  top: -12px;
+  left: calc(50% + var(--tape-x, 0%));
+  z-index: 2;
+  width: 38%;
+  height: 24px;
+  margin-left: -19%;
+  /* Faint stripes so it reads as paper tape */
+  background:
+    repeating-linear-gradient(90deg, transparent 0 7px, rgba(255, 255, 255, 0.22) 7px 9px),
+    var(--tape);
+  transform: rotate(var(--tape-rot, -3deg));
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Controls & ticker ---------- */
+.controls {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: calc(44px + 14px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tidy {
+  pointer-events: auto;
+  padding: 10px 18px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.tidy:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: #fff;
+}
+
+.tidy:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.ticker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  height: 44px;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: scroll 40s linear infinite;
+}
+
+.run {
+  display: flex;
+  gap: 0.6em;
+  padding-right: 0.6em;
+  white-space: nowrap;
+  font-family: var(--font-kinetic), system-ui, sans-serif;
+  font-variation-settings: "wght" 700, "wdth" 110;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.run b {
+  color: var(--accent);
+  font-weight: inherit;
+  filter: brightness(1.6);
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 700px) {
+  .top {
+    padding: 12px 14px;
+  }
+
+  .mark {
+    font-size: 13px;
+  }
+
+  .nav a {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .intro {
+    top: 9%;
+  }
+
+  .name {
+    font-size: 21vw;
+  }
+
+  .word {
+    display: block;
+  }
+
+  .role strong {
+    font-size: 12px;
+  }
+
+  .role span {
+    font-size: 13px;
+    padding: 0 24px;
+  }
+
+  .lift {
+    padding: 6px 6px 8px;
+  }
+
+  .label {
+    padding-top: 6px;
+  }
+
+  .tape {
+    height: 18px;
+    top: -9px;
+  }
+
+  .title {
+    font-size: 13px;
+  }
+
+  .tag {
+    font-size: 10px;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .controls {
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+/* ---------- Scroll cue ---------- */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.scrollCue {
+  pointer-events: auto;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.scrollCue span {
+  display: inline-block;
+  animation: nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@media (max-width: 700px) {
+  .controls {
+    justify-content: space-between;
+  }
+
+  .scrollCue {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollCue span {
+    animation: none;
+  }
+}
