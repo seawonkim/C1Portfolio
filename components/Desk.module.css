@@ -522,12 +522,31 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.7s ease;
   pointer-events: none;
 }
 
+/* The new project wipes in from the left over the previous one, with a slight zoom that settles */
 .spotActive {
+  z-index: 2;
   opacity: 1;
+  animation: spotWipe 0.8s cubic-bezier(0.65, 0, 0.25, 1) both;
+}
+
+/* The previous project stays visible underneath during the wipe */
+.spotPrev {
+  z-index: 1;
+  opacity: 1;
+}
+
+@keyframes spotWipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: scale(1.08);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
 }
 
 .spotLabel {
@@ -543,6 +562,26 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+/* Number, title and tag slide up one after another when the project changes */
+.spotText > * {
+  animation: spotTextIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.spotText > *:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.spotText > *:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+@keyframes spotTextIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
 }
 
 .spotCount {

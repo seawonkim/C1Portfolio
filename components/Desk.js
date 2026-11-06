@@ -57,7 +57,17 @@ export default function Desk() {
   const cardRefs = useRef([]);
   const spotRef = useRef(null);
   // Which project the big spotlight shows; it moves to the next one every few seconds
-  const [spot, setSpot] = useState(0);
+  // The current project, plus the previous one, which stays underneath while the new one wipes in
+  const [spotState, setSpotState] = useState({ cur: 0, prev: -1 });
+  const spot = spotState.cur;
+  const prevSpot = spotState.prev;
+  const setSpot = (value) =>
+    setSpotState((s) => {
+      const next = typeof value === "function" ? value(s.cur) : value;
+      return next === s.cur ? s : { cur: next, prev: s.cur };
+    });
+  const mediaClass = (i) =>
+    `${styles.spotMedia} ${i === spot ? styles.spotActive : i === prevSpot ? styles.spotPrev : ""}`;
   const [paused, setPaused] = useState(false);
   // Start neat so every project is visible at first glance; "Make a mess" is the playful extra.
   const modeRef = useRef("tidy");
@@ -473,7 +483,7 @@ export default function Desk() {
                 key={p.title}
                 src={p.video}
                 poster={p.image}
-                className={`${styles.spotMedia} ${i === spot ? styles.spotActive : ""}`}
+                className={mediaClass(i)}
                 autoPlay
                 muted
                 loop
@@ -483,12 +493,12 @@ export default function Desk() {
               />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={p.title} src={p.image} alt="" draggable={false} className={`${styles.spotMedia} ${i === spot ? styles.spotActive : ""}`} />
+              <img key={p.title} src={p.image} alt="" draggable={false} className={mediaClass(i)} />
             )
           )}
         </span>
         <span className={styles.spotLabel}>
-          <span className={styles.spotText}>
+          <span key={spot} className={styles.spotText}>
             <span className={styles.spotCount}>
               {String(spot + 1).padStart(2, "0")} / {String(webProjects.length).padStart(2, "0")}
             </span>

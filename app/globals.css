@@ -679,11 +679,8 @@ h3 {
   }
 }
 
+/* Each component handles reduced motion itself; here we only stop smooth scrolling */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
   html {
     scroll-behavior: auto;
   }
