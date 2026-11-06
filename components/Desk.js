@@ -159,11 +159,13 @@ export default function Desk() {
       const base = items[0];
       const head = desk.querySelector(`.${styles.intro}`);
       const top = head ? head.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + (narrow ? 18 : 26) : H * 0.4;
-      const bottom = H - TICKER_H - (narrow ? 70 : 76);
+      // On desktop the buttons live in the top bar, so the layout can run almost to the ticker
+      const bottom = H - TICKER_H - (narrow ? 70 : 30);
       const availH = bottom - top;
       const gap = narrow ? 10 : 18;
       const pad = narrow ? 8 : 12;
-      const labelH = narrow ? 64 : 78;
+      const labelH = narrow ? 64 : 72;
+      const ratio = 16 / 9; // widescreen frame suits most project images
 
       // Balanced rows for the small prints (7 -> 3 + 4, never 3 + 3 + 1)
       const rowsFor = (maxCols) => {
@@ -179,7 +181,7 @@ export default function Desk() {
       if (narrow) {
         // Spotlight across the top, small prints underneath
         const spotW = W - 32;
-        const imgH = Math.min((spotW - pad * 2) / 1.6, availH * 0.55);
+        const imgH = Math.min((spotW - pad * 2) / ratio, availH * 0.55);
         const spotH = imgH + pad * 2 + labelH;
         spot = { x: (W - spotW) / 2, y: top, w: spotW, imgH };
         const rows = rowsFor(4);
@@ -193,28 +195,30 @@ export default function Desk() {
           for (let c = 0; c < size; c++) spots.push({ cx: (W - rowW) / 2 + c * (cw + gap) + cw / 2, cy: gridTop + r * (ch + gap) + ch / 2 });
         });
       } else {
-        // Spotlight on the left, small prints in a grid on the right
-        const imgW = Math.min(W * 0.5, (availH - labelH - pad * 2) * 1.6);
-        const imgH = imgW / 1.6;
-        const spotW = imgW + pad * 2;
-        const spotH = imgH + pad * 2 + labelH;
-        const between = 44;
-        const gridMaxW = W - 64 - between - spotW;
-        const rows = rowsFor(n > 6 ? 3 : 2);
-        const cols = Math.max(...rows);
-        scale = Math.min(1, (gridMaxW - gap * (cols - 1)) / cols / base.w, (availH - gap * (rows.length - 1)) / rows.length / base.h);
+        // Gallery wall: the spotlight in the middle, a column of small prints on each side
+        const leftCount = Math.floor(n / 2);
+        const rightCount = n - leftCount;
+        const tallest = Math.max(leftCount, rightCount);
+        const colGap = 26;
+        scale = Math.min(1, (availH - gap * (tallest - 1)) / tallest / base.h);
         const cw = base.w * scale;
         const ch = base.h * scale;
-        const gridW = cols * cw + (cols - 1) * gap;
-        const gridH = rows.length * ch + (rows.length - 1) * gap;
-        const startX = (W - (spotW + between + gridW)) / 2;
-        spot = { x: startX, y: top + (availH - spotH) / 2, w: spotW, imgH };
-        const gridLeft = startX + spotW + between;
-        const gridTop = top + (availH - gridH) / 2;
-        rows.forEach((size, r) => {
-          const rowW = size * cw + (size - 1) * gap;
-          for (let c = 0; c < size; c++) spots.push({ cx: gridLeft + (gridW - rowW) / 2 + c * (cw + gap) + cw / 2, cy: gridTop + r * (ch + gap) + ch / 2 });
-        });
+        // The spotlight takes the remaining width, limited by the height available
+        const byWidth = W - 48 - colGap * 2 - cw * 2;
+        const byHeight = (availH - labelH - pad * 2) * ratio + pad * 2;
+        const spotW = Math.min(byWidth, byHeight);
+        const imgH = (spotW - pad * 2) / ratio;
+        const spotH = imgH + pad * 2 + labelH;
+        const total = cw + colGap + spotW + colGap + cw;
+        const startX = (W - total) / 2;
+        spot = { x: startX + cw + colGap, y: top + (availH - spotH) / 2, w: spotW, imgH };
+        const column = (count, cx, offset) => {
+          const colH = count * ch + (count - 1) * gap;
+          const y0 = top + (availH - colH) / 2;
+          for (let k = 0; k < count; k++) spots[offset + k] = { cx, cy: y0 + k * (ch + gap) + ch / 2 };
+        };
+        column(leftCount, startX + cw / 2, 0);
+        column(rightCount, startX + cw + colGap + spotW + colGap + cw / 2, leftCount);
       }
 
       // Place the spotlight
@@ -438,12 +442,20 @@ export default function Desk() {
         <Link href="/" className={styles.mark}>
           <span>{site.name}</span>
         </Link>
+        <div className={styles.topRight}>
+          <a href="#work" className={`${styles.scrollCue} ${styles.topOnly}`}>
+            See projects <span aria-hidden="true">↓</span>
+          </a>
+          <button type="button" className={`${styles.tidy} ${styles.topOnly}`} onClick={toggleMode} aria-pressed={mode === "tidy"}>
+            {mode === "tidy" ? "Make a mess ✺" : "Tidy up ▦"}
+          </button>
         <nav className={styles.nav}>
           <a href={`mailto:${site.email}`}>Email</a>
           <a href={`https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener noreferrer">
             Instagram
           </a>
         </nav>
+        </div>
       </header>
 
       <div className={styles.intro}>
@@ -546,6 +558,7 @@ export default function Desk() {
         </a>
       ))}
 
+      {/* On phones the buttons sit at the bottom instead of the top bar */}
       <div className={styles.controls}>
         <span className={styles.left}>
           <a href="#work" className={styles.scrollCue}>
