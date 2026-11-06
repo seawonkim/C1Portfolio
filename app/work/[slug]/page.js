@@ -104,8 +104,21 @@ export default async function WorkPage({ params }) {
 
         {project.afterHero && (
           <div className={styles.afterHero}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={project.afterHero.src} alt={project.afterHero.alt || ""} />
+            {project.afterHero.video ? (
+              <video
+                src={project.afterHero.video}
+                poster={project.afterHero.poster}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={project.afterHero.src} alt={project.afterHero.alt || ""} />
+            )}
           </div>
         )}
 

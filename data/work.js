@@ -97,6 +97,8 @@ export const work = [
     color: "#ffe14d",
     accent: "#ec5a9b",
     hero: { src: slide(15) },
+    // The website walkthrough, playing right under the cover
+    afterHero: { video: "/work/ratronics/website.mp4", poster: slide(15) },
     meta: [
       { label: "Client", value: "Self-initiated" },
       { label: "Type", value: "Brand mock-up" },
@@ -130,8 +132,8 @@ export const work = [
       },
       {
         title: "Digital Applications",
-        text: "Campaign graphics, app icons, social screens and a website that carry the same playful system online.",
-        rows: ratRows(21, 22, [23, 24], 25, [26, 27], 28),
+        text: "Campaign graphics, app icons, and social screens that carry the same playful system online.",
+        rows: ratRows(21, 22, [23, 24], 25, [26, 27]),
       },
     ],
     next: "saligia",

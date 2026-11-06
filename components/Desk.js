@@ -39,6 +39,8 @@ const TAPES = [
   { color: "rgba(166, 210, 80, 0.78)", rot: -3, x: 10 },
 ];
 
+const TIDY_TILT = [-2, 1.5, -1, 2, -1.5, 1];
+
 const FRICTION = 0.92;
 const SPRING = 0.12;
 const TICKER_H = 44;
@@ -49,8 +51,9 @@ export default function Desk() {
   const deskRef = useRef(null);
   const letterRefs = useRef([]);
   const cardRefs = useRef([]);
-  const modeRef = useRef("mess");
-  const [mode, setMode] = useState("mess");
+  // Start neat so every project is visible at first glance; "Make a mess" is the playful extra.
+  const modeRef = useRef("tidy");
+  const [mode, setMode] = useState("tidy");
   const router = useRouter();
 
   useEffect(() => {
@@ -102,7 +105,7 @@ export default function Desk() {
           it.x = targets[i].x;
           it.y = -it.h - 80 - i * 60;
           it.r = targets[i].r * 3;
-          it.target = { ...targets[i], delay: reduceMotion ? 0 : 250 + i * 110 };
+          it.target = { ...targets[i], delay: reduceMotion ? 0 : 80 + i * 55 };
           if (reduceMotion) Object.assign(it, targets[i], { target: null });
         } else {
           it.target = { ...targets[i] };
@@ -134,7 +137,7 @@ export default function Desk() {
 
     function tidyTargets() {
       const n = items.length;
-      const maxCols = narrow ? 3 : W < 1100 ? 4 : n;
+      const maxCols = narrow ? 2 : 3;
       // Split the pieces into evenly sized rows (7 -> 3 + 4, never 3 + 3 + 1),
       // with the shorter rows first so nothing is left alone at the end.
       const rowCount = Math.ceil(n / maxCols);
@@ -144,13 +147,14 @@ export default function Desk() {
       const cols = Math.max(...rowSizes);
 
       const head = desk.querySelector(`.${styles.intro}`);
-      const top = head ? head.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + 20 : H * 0.45;
-      const bottom = H - TICKER_H - 64;
+      const top = head ? head.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + (narrow ? 22 : 30) : H * 0.4;
+      // On wide screens the grid sits between the side buttons, so it can use that height too
+      const bottom = H - TICKER_H - (narrow ? 70 : W >= 1100 ? 18 : 76);
       const gap = narrow ? 12 : 20;
       const cellW = (W - gap * (cols + 1)) / cols;
       const cellH = (bottom - top - gap * (rowCount - 1)) / rowCount;
       const base = items[0];
-      const scale = Math.min(1.15, cellW / base.w, cellH / base.h);
+      const scale = Math.min(1.6, cellW / base.w, cellH / base.h);
       const cardW = base.w * scale;
       const cardH = base.h * scale;
 
@@ -163,7 +167,8 @@ export default function Desk() {
         }
       });
       // Positions are for the unscaled card; scaling happens around the card's centre.
-      return items.map((it, i) => ({ x: spots[i].cx - it.w / 2, y: spots[i].cy - it.h / 2, r: 0, scale }));
+      // A slight hand-placed tilt so the neat layout still feels like prints on a desk
+      return items.map((it, i) => ({ x: spots[i].cx - it.w / 2, y: spots[i].cy - it.h / 2, r: TIDY_TILT[i % TIDY_TILT.length], scale }));
     }
 
     // ---- Kinetic name ----
@@ -430,7 +435,6 @@ export default function Desk() {
           <a href="#work" className={styles.scrollCue}>
             See projects <span aria-hidden="true">↓</span>
           </a>
-          <span className={styles.hint}>Drag the work around · Click to open</span>
         </span>
         <button type="button" className={styles.tidy} onClick={toggleMode} aria-pressed={mode === "tidy"}>
           {mode === "tidy" ? "Make a mess ✺" : "Tidy up ▦"}
