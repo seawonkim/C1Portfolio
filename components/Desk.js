@@ -14,10 +14,11 @@ const SKILLS = ["Branding", "Packaging", "Campaigns", "Social & Digital", "Illus
 const MESS_WIDE = [
   { x: 0.015, y: 0.08, r: -6 },
   { x: 0.775, y: 0.07, r: 5 },
-  { x: 0.02, y: 0.57, r: 4 },
-  { x: 0.265, y: 0.6, r: -4 },
-  { x: 0.51, y: 0.57, r: 5 },
-  { x: 0.765, y: 0.555, r: -5 },
+  { x: 0.01, y: 0.57, r: 4 },
+  { x: 0.205, y: 0.61, r: -4 },
+  { x: 0.4, y: 0.57, r: 5 },
+  { x: 0.595, y: 0.61, r: -5 },
+  { x: 0.79, y: 0.56, r: 3 },
 ];
 const MESS_NARROW = [
   { x: 0.03, y: 0.34, r: -5 },
@@ -26,6 +27,7 @@ const MESS_NARROW = [
   { x: 0.51, y: 0.49, r: -4 },
   { x: 0.03, y: 0.655, r: 3 },
   { x: 0.53, y: 0.65, r: -3 },
+  { x: 0.28, y: 0.58, r: 5 },
 ];
 
 // Washi tape colors, angles and positions, one per piece (repeats if there are more pieces)
@@ -39,7 +41,9 @@ const TAPES = [
   { color: "rgba(166, 210, 80, 0.78)", rot: -3, x: 10 },
 ];
 
-const TIDY_TILT = [-2, 1.5, -1, 2, -1.5, 1];
+const TIDY_TILT = [-2, 1.5, -1, 2, -1.5, 1, -2.5];
+
+const SPOT_MS = 4000;
 
 const FRICTION = 0.92;
 const SPRING = 0.12;
@@ -51,6 +55,10 @@ export default function Desk() {
   const deskRef = useRef(null);
   const letterRefs = useRef([]);
   const cardRefs = useRef([]);
+  const spotRef = useRef(null);
+  // Which project the big spotlight shows; it moves to the next one every few seconds
+  const [spot, setSpot] = useState(0);
+  const [paused, setPaused] = useState(false);
   // Start neat so every project is visible at first glance; "Make a mess" is the playful extra.
   const modeRef = useRef("tidy");
   const [mode, setMode] = useState("tidy");
@@ -135,39 +143,80 @@ export default function Desk() {
       });
     }
 
+    // Neat layout: one big spotlight print, with the rest as smaller prints beside it (below it on phones)
     function tidyTargets() {
       const n = items.length;
-      const maxCols = narrow ? 2 : 3;
-      // Split the pieces into evenly sized rows (7 -> 3 + 4, never 3 + 3 + 1),
-      // with the shorter rows first so nothing is left alone at the end.
-      const rowCount = Math.ceil(n / maxCols);
-      const small = Math.floor(n / rowCount);
-      const bigRows = n % rowCount;
-      const rowSizes = Array.from({ length: rowCount }, (_, r) => (r < rowCount - bigRows ? small : small + 1));
-      const cols = Math.max(...rowSizes);
-
-      const head = desk.querySelector(`.${styles.intro}`);
-      const top = head ? head.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + (narrow ? 22 : 30) : H * 0.4;
-      // On wide screens the grid sits between the side buttons, so it can use that height too
-      const bottom = H - TICKER_H - (narrow ? 70 : W >= 1100 ? 18 : 76);
-      const gap = narrow ? 12 : 20;
-      const cellW = (W - gap * (cols + 1)) / cols;
-      const cellH = (bottom - top - gap * (rowCount - 1)) / rowCount;
       const base = items[0];
-      const scale = Math.min(1.6, cellW / base.w, cellH / base.h);
-      const cardW = base.w * scale;
-      const cardH = base.h * scale;
+      const head = desk.querySelector(`.${styles.intro}`);
+      const top = head ? head.getBoundingClientRect().bottom - desk.getBoundingClientRect().top + (narrow ? 18 : 26) : H * 0.4;
+      const bottom = H - TICKER_H - (narrow ? 70 : 76);
+      const availH = bottom - top;
+      const gap = narrow ? 10 : 18;
+      const pad = narrow ? 8 : 12;
+      const labelH = narrow ? 64 : 78;
 
+      // Balanced rows for the small prints (7 -> 3 + 4, never 3 + 3 + 1)
+      const rowsFor = (maxCols) => {
+        const rowCount = Math.ceil(n / maxCols);
+        const small = Math.floor(n / rowCount);
+        const bigRows = n % rowCount;
+        return Array.from({ length: rowCount }, (_, r) => (r < rowCount - bigRows ? small : small + 1));
+      };
+
+      let spot;
       const spots = [];
-      rowSizes.forEach((size, row) => {
-        const rowW = size * cardW + (size - 1) * gap;
-        const left = (W - rowW) / 2; // each row is centred on its own
-        for (let c = 0; c < size; c++) {
-          spots.push({ cx: left + c * (cardW + gap) + cardW / 2, cy: top + row * (cardH + gap) + cardH / 2 });
-        }
-      });
+      let scale;
+      if (narrow) {
+        // Spotlight across the top, small prints underneath
+        const spotW = W - 32;
+        const imgH = Math.min((spotW - pad * 2) / 1.6, availH * 0.55);
+        const spotH = imgH + pad * 2 + labelH;
+        spot = { x: (W - spotW) / 2, y: top, w: spotW, imgH };
+        const rows = rowsFor(4);
+        const gridTop = top + spotH + 14;
+        const cols = Math.max(...rows);
+        scale = Math.min((W - 32 - gap * (cols - 1)) / cols / base.w, (bottom - gridTop - gap * (rows.length - 1)) / rows.length / base.h);
+        const cw = base.w * scale;
+        const ch = base.h * scale;
+        rows.forEach((size, r) => {
+          const rowW = size * cw + (size - 1) * gap;
+          for (let c = 0; c < size; c++) spots.push({ cx: (W - rowW) / 2 + c * (cw + gap) + cw / 2, cy: gridTop + r * (ch + gap) + ch / 2 });
+        });
+      } else {
+        // Spotlight on the left, small prints in a grid on the right
+        const imgW = Math.min(W * 0.5, (availH - labelH - pad * 2) * 1.6);
+        const imgH = imgW / 1.6;
+        const spotW = imgW + pad * 2;
+        const spotH = imgH + pad * 2 + labelH;
+        const between = 44;
+        const gridMaxW = W - 64 - between - spotW;
+        const rows = rowsFor(n > 6 ? 3 : 2);
+        const cols = Math.max(...rows);
+        scale = Math.min(1, (gridMaxW - gap * (cols - 1)) / cols / base.w, (availH - gap * (rows.length - 1)) / rows.length / base.h);
+        const cw = base.w * scale;
+        const ch = base.h * scale;
+        const gridW = cols * cw + (cols - 1) * gap;
+        const gridH = rows.length * ch + (rows.length - 1) * gap;
+        const startX = (W - (spotW + between + gridW)) / 2;
+        spot = { x: startX, y: top + (availH - spotH) / 2, w: spotW, imgH };
+        const gridLeft = startX + spotW + between;
+        const gridTop = top + (availH - gridH) / 2;
+        rows.forEach((size, r) => {
+          const rowW = size * cw + (size - 1) * gap;
+          for (let c = 0; c < size; c++) spots.push({ cx: gridLeft + (gridW - rowW) / 2 + c * (cw + gap) + cw / 2, cy: gridTop + r * (ch + gap) + ch / 2 });
+        });
+      }
+
+      // Place the spotlight
+      const el = spotRef.current;
+      if (el) {
+        el.style.left = `${spot.x}px`;
+        el.style.top = `${spot.y}px`;
+        el.style.width = `${spot.w}px`;
+        el.style.setProperty("--spot-img-h", `${spot.imgH}px`);
+      }
+
       // Positions are for the unscaled card; scaling happens around the card's centre.
-      // A slight hand-placed tilt so the neat layout still feels like prints on a desk
       return items.map((it, i) => ({ x: spots[i].cx - it.w / 2, y: spots[i].cy - it.h / 2, r: TIDY_TILT[i % TIDY_TILT.length], scale }));
     }
 
@@ -358,6 +407,12 @@ export default function Desk() {
     };
   }, [router]);
 
+  useEffect(() => {
+    if (mode !== "tidy" || paused) return;
+    const t = setTimeout(() => setSpot((s) => (s + 1) % webProjects.length), SPOT_MS);
+    return () => clearTimeout(t);
+  }, [spot, mode, paused]);
+
   function toggleMode() {
     const next = modeRef.current === "tidy" ? "mess" : "tidy";
     modeRef.current = next;
@@ -402,13 +457,64 @@ export default function Desk() {
         </p>
       </div>
 
+      <Link
+        ref={spotRef}
+        href={webProjects[spot].link}
+        className={`${styles.spotlight} ${mode === "tidy" ? "" : styles.spotHidden}`}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        aria-label={`Featured: ${webProjects[spot].title}. View project`}
+      >
+        <span className={styles.spotTape} aria-hidden="true" />
+        <span className={styles.spotFrame}>
+          {webProjects.map((p, i) =>
+            p.video ? (
+              <video
+                key={p.title}
+                src={p.video}
+                poster={p.image}
+                className={`${styles.spotMedia} ${i === spot ? styles.spotActive : ""}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={p.title} src={p.image} alt="" draggable={false} className={`${styles.spotMedia} ${i === spot ? styles.spotActive : ""}`} />
+            )
+          )}
+        </span>
+        <span className={styles.spotLabel}>
+          <span className={styles.spotText}>
+            <span className={styles.spotCount}>
+              {String(spot + 1).padStart(2, "0")} / {String(webProjects.length).padStart(2, "0")}
+            </span>
+            <span className={styles.spotTitle}>{webProjects[spot].title}</span>
+            <span className={styles.spotTag}>{webProjects[spot].tag}</span>
+          </span>
+          <span className={styles.spotCta}>
+            View project <span aria-hidden="true">→</span>
+          </span>
+        </span>
+        <span key={spot} className={`${styles.spotProgress} ${paused ? styles.spotPaused : ""}`} aria-hidden="true" />
+      </Link>
+
       {webProjects.map((project, i) => (
         <a
           key={project.title}
           ref={(el) => (cardRefs.current[i] = el)}
           data-index={i}
           href={project.link}
-          className={styles.card}
+          className={`${styles.card} ${mode === "tidy" && i === spot ? styles.current : ""}`}
+          onPointerEnter={(e) => {
+            if (e.pointerType !== "mouse" || mode !== "tidy") return;
+            setSpot(i);
+            setPaused(true);
+          }}
+          onPointerLeave={() => setPaused(false)}
           style={{
             "--tape": TAPES[i % TAPES.length].color,
             "--tape-rot": `${TAPES[i % TAPES.length].rot}deg`,

@@ -459,3 +459,195 @@
     animation: none;
   }
 }
+
+/* ---------- Spotlight: one big project that changes every few seconds ---------- */
+.spotlight {
+  --spot-img-h: 360px;
+  position: absolute;
+  z-index: 4;
+  display: block;
+  padding: 12px 12px 0;
+  background: #fff;
+  transform: rotate(-1deg);
+  filter: drop-shadow(0 14px 22px rgba(20, 20, 20, 0.18));
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.2s ease;
+  touch-action: pan-y;
+  animation: spotIn 0.6s ease 0.15s both;
+}
+
+.spotlight:hover {
+  transform: rotate(-1deg) translateY(-3px);
+  filter: drop-shadow(0 22px 30px rgba(20, 20, 20, 0.24));
+}
+
+.spotlight:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Hidden while the desk is messy */
+.spotHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: rotate(-4deg) scale(0.92);
+}
+
+.spotTape {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  z-index: 2;
+  width: 22%;
+  height: 28px;
+  margin-left: -11%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 7px, rgba(255, 255, 255, 0.22) 7px 9px),
+    rgba(47, 69, 255, 0.55);
+  transform: rotate(2deg);
+  mix-blend-mode: multiply;
+}
+
+.spotFrame {
+  position: relative;
+  display: block;
+  height: var(--spot-img-h);
+  overflow: hidden;
+  background: #ddd8cf;
+}
+
+.spotMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+
+.spotActive {
+  opacity: 1;
+}
+
+.spotLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 78px;
+  padding: 12px 4px 14px;
+}
+
+.spotText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.spotCount {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.spotTitle {
+  font-family: var(--font-kinetic), system-ui, sans-serif;
+  font-variation-settings: "wght" 800, "wdth" 100;
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotTag {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.spotCta {
+  flex: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.spotlight:hover .spotCta {
+  background: var(--accent);
+}
+
+/* Fills up while the current project is shown, then the next one appears */
+.spotProgress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: spotTimer 4s linear both;
+}
+
+.spotPaused {
+  animation-play-state: paused;
+}
+
+@keyframes spotTimer {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spotIn {
+  from {
+    opacity: 0;
+    transform: rotate(-3deg) translateY(16px);
+  }
+}
+
+/* The small print that is currently in the spotlight */
+.current .lift {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .spotlight {
+    padding: 8px 8px 0;
+  }
+
+  .spotLabel {
+    min-height: 64px;
+    padding: 8px 2px 10px;
+    gap: 10px;
+  }
+
+  .spotTitle {
+    font-size: 18px;
+  }
+
+  .spotTag {
+    font-size: 11px;
+  }
+
+  .spotCta {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight {
+    animation: none;
+  }
+}

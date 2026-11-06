@@ -74,4 +74,11 @@ export const webProjects = [
     video: "/projects/lg-wonder-box.mp4",
     link: "/work/lg-wonder-box",
   },
+  {
+    title: "The Eternal Path",
+    tag: "Exhibition design",
+    image: "/work/experience-in-space/color-room.jpg",
+    more: ["/work/experience-in-space/render-6.jpg", "/work/experience-in-space/title.jpg", "/work/experience-in-space/brochure-folded.jpg"],
+    link: "/work/experience-in-space",
+  },
 ];

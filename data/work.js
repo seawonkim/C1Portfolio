@@ -86,6 +86,7 @@ const mbs = (key) => `/work/memory-bubble-store/${MBS_LOCAL[key]}`;
 
 const PJP = (file) => `/work/project-jam-plant/${file}`;
 
+const EIS = (file) => `/work/experience-in-space/${file}`;
 const EVA = (file) => `/work/eva-terminal/${file}`;
 const EVA_SCREEN = EVA("screen.jpg");
 
@@ -374,6 +375,47 @@ export const work = [
         title: "Film",
         text: "Melting Dreams — final video.",
         rows: [video("/projects/lg-wonder-box.mp4", "/projects/lg-wonder-box.webp")],
+      },
+    ],
+    next: "experience-in-space",
+  },
+  {
+    slug: "experience-in-space",
+    title: "The Eternal Path",
+    subtitle: "Experience in Space · Exhibition design",
+    color: "#f4ead2",
+    accent: "#2a4f9e",
+    hero: { src: EIS("title.jpg"), alt: "The Eternal Path: A Journey Through the Life of Christ" },
+    afterHero: { src: EIS("color-room.jpg"), alt: "Colored 3D model of the exhibition space" },
+    meta: [
+      { label: "Type", value: "Exhibition design mock-up" },
+      { label: "Tools", value: "Figma, Maya, Illustrator, Photoshop" },
+    ],
+    tags: ["Exhibition design", "Spatial design", "3D modeling", "Print"],
+    intro: [
+      "The Eternal Path: A Journey Through the Life of Christ is an exhibition design mock-up. It invites visitors to walk through the defining moments of Jesus\x27 life, from his humble birth in Bethlehem onward, told through Italian and European paintings from the 14th to 18th centuries.",
+      "The project covers the exhibition identity, the gallery space and its wall layouts, and a take-home brochure — modeled in Maya and designed in Figma, Illustrator and Photoshop.",
+    ],
+    sections: [
+      {
+        title: "The Space",
+        text: "A curving gallery modeled in Maya, with arched alcoves and a central statue — seen from above, in cut-away, and at eye level.",
+        rows: [
+          cols(EIS("render-1.jpg"), EIS("render-2.jpg")),
+          cols(EIS("render-4.jpg"), EIS("render-5.jpg")),
+          cols(EIS("render-3.jpg"), EIS("render-6.jpg")),
+        ],
+      },
+      {
+        title: "Wall Elevations",
+        text: "Scaled elevations for every wall, planning where each painting, label and graphic sits.",
+        // Shown smaller for now: the wall graphic in the Figma frame is low-resolution
+        rows: [center(EIS("elevation-entrance.jpg"), "Entrance wall elevation"), cols(EIS("elevation-back.jpg"), EIS("elevation-left.jpg"), EIS("elevation-right.jpg"))],
+      },
+      {
+        title: "Brochure",
+        text: "A folded brochure in the exhibition\x27s red, blue and cream, carrying the paintings and their stories.",
+        rows: [img(EIS("brochure-folded.jpg"), "Folded exhibition brochure")],
       },
     ],
     next: "ratronics",

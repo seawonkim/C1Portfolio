@@ -7,6 +7,7 @@ import styles from "./Featured.module.css";
 // "image" or "video" overrides the project's cover just for this preview.
 const FEATURED = [
   { slug: "ratronics" },
+  { slug: "experience-in-space", image: "/work/experience-in-space/color-room.jpg" },
   { slug: "lg-wonder-box", video: "/projects/lg-wonder-box.mp4" },
   { slug: "saligia" },
   { slug: "memory-bubble-store", image: "/work/memory-bubble-store/mbs_image4.jpg" },
