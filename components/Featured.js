@@ -9,8 +9,16 @@ const FEATURED = [
   { slug: "ratronics" },
   { slug: "experience-in-space", image: "/work/experience-in-space/color-room.jpg" },
   { slug: "lg-wonder-box", video: "/projects/lg-wonder-box.mp4" },
-  { slug: "saligia" },
+  { slug: "saligia", image: "/work/saligia/greed.gif" },
   { slug: "memory-bubble-store", image: "/work/memory-bubble-store/mbs_image4.jpg" },
+];
+
+// A taste of what's on Instagram: each tile opens its post ("href") or the profile.
+const POSTS = [
+  { video: "/work/itp-camp/making-of.mp4", poster: "/work/itp-camp/painted.jpg", label: "3D printing" },
+  { video: "/work/itp-camp/moth.mp4", label: "Character sculpts" },
+  { video: "/work/reel-3d-printing.mp4", href: "https://www.instagram.com/reel/DdxhZ1jA_5S/", label: "Reels" },
+  { video: "/work/itp-camp/alien.mp4", label: "3D renders" },
 ];
 
 export default function Featured() {
@@ -57,6 +65,32 @@ export default function Featured() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className={styles.insta} aria-labelledby="insta-heading">
+        <div className={styles.head}>
+          <h2 id="insta-heading" className={styles.heading}>Lately</h2>
+          <p className={styles.lede}>
+            Reels, 3D printing projects and more —{" "}
+            <a href={`https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener noreferrer">
+              follow along on Instagram
+            </a>
+            .
+          </p>
+        </div>
+        <ul className={styles.posts}>
+          {POSTS.map((post) => (
+            <li key={post.video}>
+              <a href={post.href || `https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener noreferrer" className={styles.post}>
+                <video src={post.video} poster={post.poster} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+                <span className={styles.postLabel}>{post.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href={`https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener noreferrer" className={styles.handle}>
+          @{site.instagram} <span aria-hidden="true">↗</span>
+        </a>
       </section>
 
       <footer className={styles.footer}>

@@ -81,4 +81,11 @@ export const webProjects = [
     more: ["/work/experience-in-space/render-6.jpg", "/work/experience-in-space/title.jpg", "/work/experience-in-space/brochure-folded.jpg"],
     link: "/work/experience-in-space",
   },
+  {
+    title: "Bringing Characters to Life",
+    tag: "NYU ITP Camp workshop",
+    image: "/work/itp-camp/painted.jpg",
+    more: ["/work/itp-camp/cover.jpg", "/work/itp-camp/figures.jpg", "/work/itp-camp/turnaround.jpg"],
+    link: "/work/itp-camp",
+  },
 ];

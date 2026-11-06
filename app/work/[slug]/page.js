@@ -59,13 +59,18 @@ function Row({ row }) {
       </div>
     );
   }
-  if (row.type === "cols") {
+  if (row.type === "cols" || row.type === "loops") {
     return (
       <div className={styles.cols} style={{ "--cols": row.items.length }}>
         {row.items.map((item) => (
           <figure key={item.src} className={styles.frame}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.src} alt={item.alt} loading="lazy" />
+            {/\.(mp4|mov|webm)$/i.test(item.src) ? (
+              // Short silent clips play on a loop, like moving images
+              <video src={item.src} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={item.src} alt={item.alt || ""} loading="lazy" />
+            )}
           </figure>
         ))}
       </div>

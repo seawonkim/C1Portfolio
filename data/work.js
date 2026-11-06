@@ -8,6 +8,7 @@
 //   video(src, poster)  a video player (only loads when someone presses play)
 //   smalls(src, ...)    small images (like little sprite GIFs) shown at their own size, side by side
 //   pixels(src, ...)    tiny pixel-art sprites, enlarged with crisp pixels
+//   loops(src, ...)     short silent videos side by side that play on a loop (like moving images)
 
 
 const img = (src, alt = "") => ({ type: "full", src, alt });
@@ -16,6 +17,7 @@ const center = (src, alt = "") => ({ type: "center", src, alt });
 const video = (src, poster) => ({ type: "video", src, poster });
 const smalls = (...srcs) => ({ type: "smalls", items: srcs.map((src) => ({ src, alt: "" })) });
 const pixels = (...srcs) => ({ ...smalls(...srcs), pixel: true });
+const loops = (...srcs) => ({ type: "loops", items: srcs.map((src) => ({ src })) });
 
 
 // Ratronics slides, rendered from the brand presentation PDF (saved in public/work/ratronics)
@@ -86,6 +88,7 @@ const mbs = (key) => `/work/memory-bubble-store/${MBS_LOCAL[key]}`;
 
 const PJP = (file) => `/work/project-jam-plant/${file}`;
 
+const ITP = (file) => `/work/itp-camp/${file}`;
 const EIS = (file) => `/work/experience-in-space/${file}`;
 const EVA = (file) => `/work/eva-terminal/${file}`;
 const EVA_SCREEN = EVA("screen.jpg");
@@ -408,14 +411,65 @@ export const work = [
       },
       {
         title: "Wall Elevations",
-        text: "Scaled elevations for every wall, planning where each painting, label and graphic sits.",
-        // Shown smaller for now: the wall graphic in the Figma frame is low-resolution
-        rows: [center(EIS("elevation-entrance.jpg"), "Entrance wall elevation"), cols(EIS("elevation-back.jpg"), EIS("elevation-left.jpg"), EIS("elevation-right.jpg"))],
+        text: "A dimensioned floor plan and scaled elevations for every wall, planning the visitor path and where each painting, label and graphic sits.",
+        rows: [
+          img(EIS("floor-plan.jpg"), "Floor plan with the five-chapter visitor path"),
+          img(EIS("elevation-exterior.jpg"), "Exterior wall elevation"),
+          img(EIS("elevation-entrance.jpg"), "Entrance wall (interior) elevation"),
+          cols(EIS("elevation-left.jpg"), EIS("elevation-back.jpg"), EIS("elevation-right.jpg")),
+        ],
       },
       {
         title: "Brochure",
         text: "A folded brochure in the exhibition\x27s red, blue and cream, carrying the paintings and their stories.",
         rows: [img(EIS("brochure-folded.jpg"), "Folded exhibition brochure")],
+      },
+    ],
+    next: "itp-camp",
+  },
+  {
+    slug: "itp-camp",
+    title: "Bringing Characters to Life in 3D",
+    subtitle: "A 3D printing workshop I hosted at NYU ITP Camp",
+    color: "#e7f7d9",
+    accent: "#e2468f",
+    hero: { src: ITP("cover.jpg"), alt: "Seawon presenting the workshop at NYU ITP Camp" },
+    meta: [
+      { label: "Event", value: "NYU ITP Camp 2026" },
+      { label: "Format", value: "Workshop + live demo" },
+      { label: "Tools", value: "Nomad Sculpt, Blender, Bambu Lab" },
+    ],
+    tags: ["Workshop", "Character design", "3D sculpting", "3D printing"],
+    intro: [
+      "I hosted a 3D printing workshop at New York University\x27s ITP Camp titled \"Bringing Characters to Life in 3D.\"",
+      "The session walked through my workflow for turning a character idea into a physical 3D printed figure, from the first sketch to the finished, painted print. It ended with a live Nomad Sculpt demo, where I built a character from scratch in real time, showing how simple shapes evolve into a printable figure.",
+    ],
+    sections: [
+      {
+        title: "The Workshop",
+        text: "It was an amazing experience to open a session and share my process with so many talented people.",
+        rows: [cols(ITP("presenting.jpg"), ITP("room.jpg")), cols(ITP("participants.jpg"), ITP("figures.jpg"))],
+      },
+      {
+        title: "From the Talk",
+        text: "Character design, thinking in 3D, and designing for printing: strong shapes, starting low-poly, connecting printed parts, and print settings that matter.",
+        rows: [cols(ITP("slide-07.jpg"), ITP("slide-08.jpg")), cols(ITP("slide-11.jpg"), ITP("slide-14.jpg")), cols(ITP("slide-16.jpg"), ITP("slide-17.jpg"))],
+      },
+      {
+        title: "Case Study: Nelson",
+        text: "A toy figure of a client\x27s cat, used as the workshop\x27s walkthrough — from idea sketch and turnaround to 3D model, print, sanding and paint.",
+        rows: [
+          img(ITP("sketch.jpg"), "Nelson turnaround sketch"),
+          loops(ITP("sketch-to-3d.mp4")),
+          img(ITP("turnaround.jpg"), "Nelson 3D model turnaround"),
+          cols(ITP("print-1.jpg"), ITP("print-2.jpg"), ITP("print-3.jpg")),
+          cols(ITP("painted.jpg"), ITP("making-of.mp4")),
+        ],
+      },
+      {
+        title: "More Characters",
+        text: "Other characters sculpted and rendered with the same workflow.",
+        rows: [loops(ITP("moth.mp4"), ITP("alien.mp4"), ITP("bedtime.mp4"))],
       },
     ],
     next: "ratronics",

@@ -12,22 +12,24 @@ const SKILLS = ["Branding", "Packaging", "Campaigns", "Social & Digital", "Illus
 
 // Where each piece lands on the desk ("mess"), as fractions of the screen, plus a tilt in degrees.
 const MESS_WIDE = [
-  { x: 0.015, y: 0.08, r: -6 },
-  { x: 0.775, y: 0.07, r: 5 },
-  { x: 0.01, y: 0.57, r: 4 },
-  { x: 0.205, y: 0.61, r: -4 },
-  { x: 0.4, y: 0.57, r: 5 },
-  { x: 0.595, y: 0.61, r: -5 },
-  { x: 0.79, y: 0.56, r: 3 },
+  { x: 0.01, y: 0.3, r: -6 },
+  { x: 0.23, y: 0.27, r: 4 },
+  { x: 0.48, y: 0.34, r: -3 },
+  { x: 0.78, y: 0.28, r: 5 },
+  { x: 0.1, y: 0.62, r: 3 },
+  { x: 0.35, y: 0.56, r: -5 },
+  { x: 0.6, y: 0.63, r: 6 },
+  { x: 0.82, y: 0.54, r: -4 },
 ];
 const MESS_NARROW = [
-  { x: 0.03, y: 0.34, r: -5 },
-  { x: 0.53, y: 0.33, r: 4 },
-  { x: 0.05, y: 0.5, r: 3 },
-  { x: 0.51, y: 0.49, r: -4 },
-  { x: 0.03, y: 0.655, r: 3 },
-  { x: 0.53, y: 0.65, r: -3 },
-  { x: 0.28, y: 0.58, r: 5 },
+  { x: 0.02, y: 0.34, r: -6 },
+  { x: 0.5, y: 0.31, r: 5 },
+  { x: 0.24, y: 0.44, r: 3 },
+  { x: 0.6, y: 0.5, r: -4 },
+  { x: 0, y: 0.56, r: 4 },
+  { x: 0.34, y: 0.63, r: -3 },
+  { x: 0.04, y: 0.7, r: 6 },
+  { x: 0.5, y: 0.69, r: -5 },
 ];
 
 // Washi tape colors, angles and positions, one per piece (repeats if there are more pieces)
@@ -41,9 +43,9 @@ const TAPES = [
   { color: "rgba(166, 210, 80, 0.78)", rot: -3, x: 10 },
 ];
 
-const TIDY_TILT = [-2, 1.5, -1, 2, -1.5, 1, -2.5];
+const TIDY_TILT = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 1.5];
 
-const SPOT_MS = 4000;
+const SPOT_MS = 5000;
 
 const FRICTION = 0.92;
 const SPRING = 0.12;
@@ -145,7 +147,7 @@ export default function Desk() {
           // Keep the same staggering, but start the lower rows below the text
           y = Math.max(y, textBottom + (s.y - firstLower) * H);
           // Stay above the ticker, but never move back up over the text
-          y = Math.max(textBottom, Math.min(y, H - TICKER_H - it.h - 12));
+          y = Math.max(textBottom, Math.min(y, H - TICKER_H - it.h - (narrow ? 86 : 12)));
         } else {
           y = clamp(y, 60, H - TICKER_H - it.h - 12);
         }
@@ -507,6 +509,17 @@ export default function Desk() {
               // eslint-disable-next-line @next/next/no-img-element
               <img key={p.title} src={p.image} alt="" draggable={false} className={mediaClass(i)} />
             )
+          )}
+          {/* Halfway through its turn, the featured project fades to its next image */}
+          {!webProjects[spot].video && webProjects[spot].more?.length > 0 && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={`second-${spot}`}
+              src={webProjects[spot].more[0]}
+              alt=""
+              draggable={false}
+              className={`${styles.spotMedia} ${styles.spotSecond} ${paused ? styles.spotPaused : ""}`}
+            />
           )}
         </span>
         <span className={styles.spotLabel}>
